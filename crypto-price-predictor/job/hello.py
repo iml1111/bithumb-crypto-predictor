@@ -11,15 +11,6 @@ class HelloWorld(Job):
         logger.info(f"It's {self.settings.app_name}!")
 
 
-class SlowWork(Job):
-
-    async def run(self, sec: int = 1):
-        sec, ok = convert_param(sec, int)
-        if not ok:
-            raise ValueError(f"Invalid param: sec={sec}")
-        time.sleep(sec)
-        logger.info(f"Slow Work {sec}!")
-
 
 class BadWork(Job):
 
