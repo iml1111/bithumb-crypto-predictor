@@ -4,9 +4,9 @@ colorama==0.4.6
 loguru==0.7.0
 markdown-it-py==3.0.0
 mdurl==0.1.2
-pydantic==2.1.1
-pydantic-settings==2.0.2
-pydantic_core==2.4.0
+pydantic==2.7.2
+pydantic-settings==2.2.1
+pydantic_core==2.18.3
 Pygments==2.16.1
 python-dotenv==1.0.0
 rich==13.5.2
