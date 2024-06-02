@@ -1,4 +1,4 @@
-# Crytpo Price Predictor
+# Bithumb Crytpo Predictor
 Boilerplate for Scalable Python Job Workers
 
 # References
