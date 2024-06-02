@@ -11,7 +11,6 @@ class HelloWorld(Job):
         logger.info(f"It's {self.settings.app_name}!")
 
 
-
 class BadWork(Job):
 
     async def run(self):
