@@ -130,3 +130,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 bithub-crypto-predictor/assets/USER_PROMPT.json
+bithub-crypto-predictor/assets/REPORT.md

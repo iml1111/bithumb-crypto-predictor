@@ -12,7 +12,7 @@ from controller.job.util import convert_param
 
 class Predictor(Job):
 
-    async def run(self, symbol: str, iteration: int = 5):
+    async def run(self, symbol: str, iteration: int = 1):
         logger.info(f"Predictor Job is running for {symbol}")
         iteration, ok = convert_param(iteration, int)
         aiohttp_session = await ClientSession().__aenter__()
@@ -73,12 +73,20 @@ class Predictor(Job):
             )
         ]
 
-        for i in range(iteration):
-            response = openai_api.send_message_contexts(message_contexts, json_mode=True)
-            logger.info(f"# {i + 1} - Response:")
-            logger.info(f"Tokens Usage: {response.usage}")
-            logger.info(json.loads(response.choices[0].message.content))
+        with open("assets/REPORT.md", "w") as f:
+            f.write("# Report\n\n")
 
+            for i in range(iteration):
+                response = openai_api.send_message_contexts(message_contexts, json_mode=True)
+                result = json.loads(response.choices[0].message.content)
+
+                f.write(f"## Iteration {i + 1}\n")
+                f.write(f"Tokens Usage: {response.usage}\n\n")
+                f.write(f"- decision: {result['decision']}\n")
+                f.write(f"- percentage: {result['percentage']}\n")
+                f.write(f"- reason: {result['reason']}\n\n")
+
+        logger.info("Creating Report to assets/REPORT.md...")
         await aiohttp_session.__aexit__(None, None, None)
 
 
