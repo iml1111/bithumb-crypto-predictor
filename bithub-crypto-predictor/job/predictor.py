@@ -7,13 +7,14 @@ from aiohttp import ClientSession
 from controller.bithumb_api import BithumbAPI
 from controller.fear_greed_index import fetch_fear_and_greed_index
 from controller.openai_api import OpenAIAPI, MessageContext
+from controller.job.util import convert_param
 
 
 class Predictor(Job):
 
-    async def run(self, symbol: str):
+    async def run(self, symbol: str, iteration: int = 5):
         logger.info(f"Predictor Job is running for {symbol}")
-
+        iteration, ok = convert_param(iteration, int)
         aiohttp_session = await ClientSession().__aenter__()
         bithumb_api = BithumbAPI()
         openai_api = OpenAIAPI(api_key=self.settings.openai_api_key)
@@ -72,9 +73,11 @@ class Predictor(Job):
             )
         ]
 
-        response = openai_api.send_message_contexts(message_contexts, json_mode=True)
-        logger.info(f"Tokens Usage: {response.usage}")
-        logger.info(json.loads(response.choices[0].message.content))
+        for i in range(iteration):
+            response = openai_api.send_message_contexts(message_contexts, json_mode=True)
+            logger.info(f"# {i + 1} - Response:")
+            logger.info(f"Tokens Usage: {response.usage}")
+            logger.info(json.loads(response.choices[0].message.content))
 
         await aiohttp_session.__aexit__(None, None, None)
 
