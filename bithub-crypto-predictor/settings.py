@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     contact_name: str = __AUTHOR__
     contact_url: str = "https://github.com/iml1111"
     contact_email: str = "shin10256@gmail.com"
+    openai_api_key: str
 
     model_config = SettingsConfigDict(
         env_file=BASE_DIR + '/.env',
