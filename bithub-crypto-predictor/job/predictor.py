@@ -74,17 +74,23 @@ class Predictor(Job):
         ]
 
         with open("assets/REPORT.md", "w") as f:
+            token_usages = []
             f.write("# Report\n\n")
 
             for i in range(iteration):
                 response = openai_api.send_message_contexts(message_contexts, json_mode=True)
+                logger.info(f"Iteration {i + 1} Completed...")
                 result = json.loads(response.choices[0].message.content)
+                token_usages.append(response.usage)
 
                 f.write(f"## Iteration {i + 1}\n")
-                f.write(f"Tokens Usage: {response.usage}\n\n")
-                f.write(f"- decision: {result['decision']}\n")
-                f.write(f"- percentage: {result['percentage']}\n")
+                f.write(f"- **decision: {result['decision']}**\n")
+                f.write(f"- **percentage: {result['percentage']}**\n")
                 f.write(f"- reason: {result['reason']}\n\n")
+
+            f.write("\n## Token Usages\n")
+            for i, token_usage in enumerate(token_usages):
+                f.write(f"- Tokens Usage: {i + 1} - {response.usage}\n")
 
         logger.info("Creating Report to assets/REPORT.md...")
         await aiohttp_session.__aexit__(None, None, None)
