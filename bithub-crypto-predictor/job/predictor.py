@@ -61,6 +61,8 @@ class Predictor(Job):
         # Create Prompt
         with open("assets/instruction.md", "r") as f:
             system_context = f.read()
+            system_context = system_context.replace("{crypto}", symbol.split('-')[1])
+
         logger.info("Extracting user prompt to assets/USER_PROMPT.json...")
         with open("assets/USER_PROMPT.json", "w") as f:
             json.dump(user_prompt, f, ensure_ascii=False, indent=4)
