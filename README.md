@@ -1,5 +1,5 @@
 # Bithumb Crytpo Predictor
-Boilerplate for Scalable Python Job Workers!!
+Boilerplate for Scalable Python Job Workers
 
 ## Get Started
 
