@@ -17,7 +17,10 @@ class Predictor(Job):
         iteration, ok = convert_param(iteration, int)
         aiohttp_session = await ClientSession().__aenter__()
         bithumb_api = BithumbAPI()
-        openai_api = OpenAIAPI(api_key=self.settings.openai_api_key)
+        openai_api = OpenAIAPI(
+            api_key=self.settings.openai_api_key,
+            model="o1-preview"
+        )
 
         user_prompt = {}
 
@@ -69,7 +72,7 @@ class Predictor(Job):
 
         logger.info("Sending prompt to OpenAI API...")
         message_contexts = [
-            MessageContext(content=system_context, role="system"),
+            MessageContext(content=system_context, role="user"),
             MessageContext(
                 content=json.dumps(user_prompt, ensure_ascii=False), role="user"
             )
@@ -80,19 +83,14 @@ class Predictor(Job):
             f.write("# Report\n\n")
 
             for i in range(iteration):
-                response = openai_api.send_message_contexts(message_contexts, json_mode=True)
+                response = openai_api.send_message_contexts(message_contexts, json_mode=False)
                 logger.info(f"Iteration {i + 1} Completed...")
-                result = json.loads(response.choices[0].message.content)
-                token_usages.append(response.usage)
+
+                response_msg = response.choices[0].message.content
+                response_msg = response_msg.replace("```", "").replace("json", "")
 
                 f.write(f"## Iteration {i + 1}\n")
-                f.write(f"- **decision: {result['decision']}**\n")
-                f.write(f"- **percentage: {result['percentage']}**\n")
-                f.write(f"- reason: {result['reason']}\n\n")
-
-            f.write("\n## Token Usages\n")
-            for i, token_usage in enumerate(token_usages):
-                f.write(f"- Tokens Usage: {i + 1} - {response.usage}\n")
+                f.write(f"{response_msg}\n")
 
         logger.info("Creating Report to assets/REPORT.md...")
         await aiohttp_session.__aexit__(None, None, None)
